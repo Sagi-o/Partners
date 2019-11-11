@@ -1,8 +1,8 @@
 package com.app.partners.activities.welcome;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
-import android.media.effect.Effect;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -11,19 +11,39 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
 import com.app.partners.R;
+import com.app.partners.models.User;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class RegisterActivity extends AppCompatActivity {
 
     static String TAG = "RegisterActivity";
-    EditText first_name;
-    EditText last_name;
-    EditText email;
-    EditText phone_number;
-    EditText password;
-    EditText password_confirm;
 
+    private EditText first_name;
+    private EditText last_name;
+    private EditText email;
+    private EditText phone_number;
+    private EditText password;
+    private EditText password_confirm;
 
+    private String first_name_st;
+    private String last_name_st;
+    private String email_st;
+    private String phone_number_st;
+    private String password_st;
+
+    private FirebaseAuth firebaseAuth;
+    private ProgressDialog progressDialog;
+    private DatabaseReference usersRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,16 +56,73 @@ public class RegisterActivity extends AppCompatActivity {
         phone_number = findViewById(R.id.phone_number);
         password = findViewById(R.id.password);
         password_confirm = findViewById(R.id.password_confirm);
+
+        firebaseAuth = firebaseAuth.getInstance();
+        usersRef = FirebaseDatabase.getInstance().getReference().child("users");
+        progressDialog = new ProgressDialog(this);
+    }
+
+    private void registerUser(){
+        firebaseAuth.createUserWithEmailAndPassword(email_st, password_st).
+                addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()){
+                            progressDialog.setMessage("Setting user on DB...");
+                            Log.d(TAG,"enter succsefuly");
+                            User user = new User(first_name_st, last_name_st, email_st, phone_number_st, password_st);
+                            setUserOnDb(user);
+                        }
+                        else{
+                            Log.d(TAG,"enter didnt work succsefuly");
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                progressDialog.setMessage("Error: " + e);
+                Log.d(TAG, "onFailure: " + e);
+            }
+        });
+    }
+
+    private void setUserOnDb(User user) {
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        Log.d(TAG, "setUserOnDb: On user creation: " + uid);
+        usersRef.child(uid).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.d(TAG, "onSuccess: Write Success");
+                progressDialog.dismiss();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d(TAG, "onFailure: " + e);
+            }
+        });
+
+
     }
 
     public void registerClick(View v) {
         if (checkDataEntered()){
-            navigateToWelcome(v);
+
+            progressDialog.setMessage("Registering Please Wait...");
+            progressDialog.show();
+
+            first_name_st = first_name.getText().toString();
+            last_name_st = last_name.getText().toString();
+            email_st = email.getText().toString();
+            phone_number_st = phone_number.getText().toString();
+            password_st = password.getText().toString();
+
+            registerUser();
+//            navigateToWelcome(v);
         }
-        else{
+        else {
             Toast t = Toast.makeText(this,"הוכנסו נתונים שגויים",Toast.LENGTH_SHORT);
             t.show();
-
         }
 
         Log.d(TAG, "password " + password);
