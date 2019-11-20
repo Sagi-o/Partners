@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -34,16 +35,19 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText phone_number;
     private EditText password;
     private EditText password_confirm;
+    private CheckBox is_land_lord;
 
     private String first_name_st;
     private String last_name_st;
     private String email_st;
     private String phone_number_st;
     private String password_st;
+    private boolean is_land_lord_bool;
 
     private FirebaseAuth firebaseAuth;
     private ProgressDialog progressDialog;
     private DatabaseReference usersRef;
+    private boolean successLogin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,13 +60,15 @@ public class RegisterActivity extends AppCompatActivity {
         phone_number = findViewById(R.id.phone_number);
         password = findViewById(R.id.password);
         password_confirm = findViewById(R.id.password_confirm);
+        is_land_lord = findViewById(R.id.landLord);
+        successLogin = false;
 
         firebaseAuth = firebaseAuth.getInstance();
         usersRef = FirebaseDatabase.getInstance().getReference().child("users");
         progressDialog = new ProgressDialog(this);
     }
 
-    private void registerUser(){
+    private void registerUser(final View  v){
         firebaseAuth.createUserWithEmailAndPassword(email_st, password_st).
                 addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -70,8 +76,8 @@ public class RegisterActivity extends AppCompatActivity {
                         if (task.isSuccessful()){
                             progressDialog.setMessage("Setting user on DB...");
                             Log.d(TAG,"enter succsefuly");
-                            User user = new User(first_name_st, last_name_st, email_st, phone_number_st, password_st);
-                            setUserOnDb(user);
+                            User user = new User(first_name_st, last_name_st, email_st, phone_number_st, is_land_lord_bool);
+                            setUserOnDb(user,v);
                         }
                         else{
                             Log.d(TAG,"enter didnt work succsefuly");
@@ -86,7 +92,7 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
-    private void setUserOnDb(User user) {
+    private void setUserOnDb(User user, final View v) {
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         Log.d(TAG, "setUserOnDb: On user creation: " + uid);
         usersRef.child(uid).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -94,6 +100,11 @@ public class RegisterActivity extends AppCompatActivity {
             public void onSuccess(Void aVoid) {
                 Log.d(TAG, "onSuccess: Write Success");
                 progressDialog.dismiss();
+                successLogin = true;
+                if (successLogin){
+                    Log.d(TAG, "succses");
+                    navigateToWelcome(v);
+                }
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -116,9 +127,9 @@ public class RegisterActivity extends AppCompatActivity {
             email_st = email.getText().toString();
             phone_number_st = phone_number.getText().toString();
             password_st = password.getText().toString();
+            is_land_lord_bool= is_land_lord.isChecked();
 
-            registerUser();
-//            navigateToWelcome(v);
+            registerUser(v);
         }
         else {
             Toast t = Toast.makeText(this,"הוכנסו נתונים שגויים",Toast.LENGTH_SHORT);
@@ -134,6 +145,7 @@ public class RegisterActivity extends AppCompatActivity {
         Intent i = new Intent(getBaseContext(), WelcomeActivity.class);
         startActivity(i);
     }
+
 
     private boolean checkDataEntered() {
         boolean isOk = true;
@@ -178,16 +190,15 @@ public class RegisterActivity extends AppCompatActivity {
 
         return isOk;
     }
-
-
     private boolean isEmpty(EditText text){
         CharSequence str = text.getText().toString();
         return TextUtils.isEmpty(str);
     }
-
     private boolean isEmail(EditText text){
         CharSequence email = text.getText().toString();
         return (!TextUtils.isEmpty(email) && Patterns.EMAIL_ADDRESS.matcher(email).matches());
     }
+    public void setSuccessLogin(boolean successLogin) { this.successLogin = successLogin; }
+    public boolean isSuccessLogin() { return successLogin; }
 }
 
