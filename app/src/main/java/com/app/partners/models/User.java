@@ -46,6 +46,7 @@ public class User {
 //        this.password = password;
         this.isLandLord = isLandLord;
     }
+    public User(){}
 }
 
 
