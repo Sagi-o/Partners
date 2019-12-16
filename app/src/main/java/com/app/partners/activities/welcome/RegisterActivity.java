@@ -15,6 +15,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.app.partners.R;
+import com.app.partners.models.PhoneUserId;
 import com.app.partners.models.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -47,6 +48,8 @@ public class RegisterActivity extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
     private ProgressDialog progressDialog;
     private DatabaseReference usersRef;
+    private DatabaseReference phonesRef;
+
     private boolean successLogin;
 
     @Override
@@ -65,6 +68,8 @@ public class RegisterActivity extends AppCompatActivity {
 
         firebaseAuth = firebaseAuth.getInstance();
         usersRef = FirebaseDatabase.getInstance().getReference().child("users");
+        phonesRef = FirebaseDatabase.getInstance().getReference().child("phone_to_userId");
+
         progressDialog = new ProgressDialog(this);
     }
 
@@ -92,19 +97,15 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
-    private void setUserOnDb(User user, final View v) {
-        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+    private void setUserOnDb(final User user, final View v) {
+        final String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         Log.d(TAG, "setUserOnDb: On user creation: " + uid);
         usersRef.child(uid).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
                 Log.d(TAG, "onSuccess: Write Success");
                 progressDialog.dismiss();
-                successLogin = true;
-                if (successLogin){
-                    Log.d(TAG, "succses");
-                    navigateToWelcome(v);
-                }
+                setPhoneUserId(user, uid, v);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -112,8 +113,21 @@ public class RegisterActivity extends AppCompatActivity {
                 Log.d(TAG, "onFailure: " + e);
             }
         });
+    }
 
+    private void setPhoneUserId(User user, String uid, final View v) {
+        phonesRef.child(user.phone).setValue(new PhoneUserId(uid))
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        navigateToWelcome(v);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
 
+            }
+        });
     }
 
     public void registerClick(View v) {
@@ -132,13 +146,11 @@ public class RegisterActivity extends AppCompatActivity {
             registerUser(v);
         }
         else {
-            Toast t = Toast.makeText(this,"הוכנסו נתונים שגויים",Toast.LENGTH_SHORT);
-            t.show();
+            Toast.makeText(this,"Wrong details entered. Try again",Toast.LENGTH_SHORT).show();
         }
 
         Log.d(TAG, "password " + password);
         Log.d(TAG, "password " + password_confirm);
-
     }
 
     public void navigateToWelcome(View v) {
