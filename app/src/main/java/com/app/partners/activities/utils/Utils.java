@@ -3,6 +3,7 @@ package com.app.partners.activities.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.widget.Toast;
 
 import com.app.partners.activities.welcome.WelcomeActivity;
 

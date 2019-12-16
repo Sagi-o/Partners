@@ -8,10 +8,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.app.partners.R;
 import com.app.partners.activities.main.LandLord;
 import com.app.partners.activities.main.Renter;
+import com.app.partners.activities.utils.Utils;
 import com.app.partners.models.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -51,6 +53,12 @@ public class WelcomeActivity extends AppCompatActivity {
         Log.d("WelcomeActivity", "Login clicked");
         email_st = email.getText().toString();
         password_st = password.getText().toString();
+
+        if (email_st.isEmpty() || password_st.isEmpty()) {
+            Toast.makeText(getApplicationContext(), "Please fill all fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         mAuth.signInWithEmailAndPassword(email_st, password_st)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
@@ -70,7 +78,7 @@ public class WelcomeActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.d("WelcomeActivity", "Login failed!" + e);
-
+                        Toast.makeText(getApplicationContext(), "Login failed...", Toast.LENGTH_SHORT).show();
                     }
         });
     }
@@ -83,7 +91,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
                     if (dataSnapshot.exists()) {
                         User user = dataSnapshot.getValue(User.class);
-                        if (user.isLandLord()){
+                        if (user.isLandLord){
                             // navigate to landlord Activity
                             Intent i = new Intent(getBaseContext(), LandLord.class);
                             startActivity(i);

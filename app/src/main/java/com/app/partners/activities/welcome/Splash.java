@@ -44,19 +44,9 @@ public class Splash extends AppCompatActivity implements Serializable {
         mDatabase = FirebaseDatabase.getInstance();
         usersRef = FirebaseDatabase.getInstance().getReference().child("users");
         getCurrentUser();
-
-        new Handler().postDelayed(new Runnable(){
-            @Override
-            public void run() {
-//               Intent i = new Intent(getBaseContext(), WelcomeActivity.class);
-//              startActivity(i);
-
-            }
-        }, 2000);
     }
 
     private void getCurrentUser(){
-
         FirebaseUser firebaseUser = mAuth.getCurrentUser();
         if (firebaseUser != null){
             uid = firebaseUser.getUid();
@@ -72,13 +62,11 @@ public class Splash extends AppCompatActivity implements Serializable {
     public void getUserFromDb(final String uid) {
         if (!uid.isEmpty()) {
             ValueEventListener userListener = new ValueEventListener() {
-                String uidd = uid;
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-
                     if (dataSnapshot.exists()) {
                         User user = dataSnapshot.getValue(User.class);
-                        if (user.isLandLord()){
+                        if (user.isLandLord){
                             // navigate to landlord Activity
                             // Extras: User
                             Intent i = new Intent(getBaseContext(), LandLord.class);
@@ -86,7 +74,7 @@ public class Splash extends AppCompatActivity implements Serializable {
                             startActivity(i);
                         } else {
                             Intent i = new Intent(getBaseContext(), Renter.class);
-                            i.putExtra("user",user.getEmail());
+                            i.putExtra("user", user.email);
                             startActivity(i);
                         }
                     }
@@ -99,7 +87,7 @@ public class Splash extends AppCompatActivity implements Serializable {
                     // ...
                 }
             };
-            mDatabase.getReference("users/" + uid).addValueEventListener(userListener);
+            mDatabase.getReference("users/" + uid).addListenerForSingleValueEvent(userListener);
         }
     }
 
