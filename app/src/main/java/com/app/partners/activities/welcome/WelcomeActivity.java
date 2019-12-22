@@ -67,7 +67,6 @@ public class WelcomeActivity extends AppCompatActivity {
 
                         Log.d("WelcomeActivity", "User is: " + firebaseUser);
                         String uid = firebaseUser.getUid();
-
                         getUserFromDb(uid);
 
                         // Check user type by fetching User object from db
