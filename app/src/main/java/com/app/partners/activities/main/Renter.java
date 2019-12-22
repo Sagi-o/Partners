@@ -1,14 +1,11 @@
 package com.app.partners.activities.main;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
-
 import com.app.partners.R;
 import com.app.partners.RenterPageStateAdapter;
 import com.app.partners.activities.utils.UserUtils;
@@ -29,7 +26,7 @@ import com.google.firebase.database.ValueEventListener;
 public class Renter extends AppCompatActivity {
     public ViewPager viewPager;
 
-    private DatabaseReference apartmentToUserIdRef;
+    private DatabaseReference userIdToApartmentRef;
     private DatabaseReference apartmentRef;
     private RenterPageStateAdapter renterPageStateAdapter;
 
@@ -51,13 +48,13 @@ public class Renter extends AppCompatActivity {
 
         String uid = firebaseUser.getUid();
 
-        apartmentToUserIdRef = FirebaseDatabase.getInstance().getReference().child("userId_to_apartment").child(uid);
+        userIdToApartmentRef = FirebaseDatabase.getInstance().getReference().child("userId_to_apartment").child(uid);
 
         checkIfApartmentExists();
     }
 
     private void setupViewPager() {
-        viewPager = findViewById(R.id.container);
+        viewPager = (findViewById(R.id.container));
         renterPageStateAdapter = new RenterPageStateAdapter(getSupportFragmentManager(), 0);
 
         renterPageStateAdapter.addFragment(new NoApartmentFragment());
@@ -105,7 +102,7 @@ public class Renter extends AppCompatActivity {
                 // ...
             }
         };
-        apartmentToUserIdRef.addListenerForSingleValueEvent(apartmentListener);
+        userIdToApartmentRef.addListenerForSingleValueEvent(apartmentListener);
     }
 
     private void getApartment(String apartmentId) {
