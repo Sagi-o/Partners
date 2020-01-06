@@ -34,7 +34,6 @@ public class Splash extends AppCompatActivity implements Serializable {
     private DatabaseReference usersRef;
     private String uid;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +51,7 @@ public class Splash extends AppCompatActivity implements Serializable {
             uid = firebaseUser.getUid();
             getUserFromDb(uid);
         }
+        
         else {
             //  Nav to Welcome
             Intent i = new Intent(getBaseContext(), WelcomeActivity.class);
@@ -66,16 +66,19 @@ public class Splash extends AppCompatActivity implements Serializable {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists()) {
                         User user = dataSnapshot.getValue(User.class);
+                        Log.d("UserName", user.firstName + " " + user.lastName);
                         if (user.isLandLord){
                             // navigate to landlord Activity
                             // Extras: User
                             Intent i = new Intent(getBaseContext(), LandLord.class);
-                            i.putExtra("user", uid+"");
+                            i.putExtra("name", user.firstName + " " + user.lastName);
                             startActivity(i);
+                            finish();
                         } else {
                             Intent i = new Intent(getBaseContext(), Renter.class);
-                            i.putExtra("user", user.email);
+                            i.putExtra("name", user.firstName + " " + user.lastName);
                             startActivity(i);
+                            finish();
                         }
                     }
                 }

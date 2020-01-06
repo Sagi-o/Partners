@@ -57,8 +57,8 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        first_name = findViewById(R.id.first_name);
-        last_name = findViewById(R.id.last_name);
+        first_name = findViewById(R.id.firstName);
+        last_name = findViewById(R.id.lastName);
         email = findViewById(R.id.email);
         phone_number = findViewById(R.id.phone_number);
         password = findViewById(R.id.password);
@@ -73,7 +73,7 @@ public class RegisterActivity extends AppCompatActivity {
         progressDialog = new ProgressDialog(this);
     }
 
-    private void registerUser(final View  v){
+    private void registerUser(final View  v) {
         firebaseAuth.createUserWithEmailAndPassword(email_st, password_st).
                 addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -99,6 +99,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void setUserOnDb(final User user, final View v) {
         final String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
         Log.d(TAG, "setUserOnDb: On user creation: " + uid);
         usersRef.child(uid).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
