@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.app.partners.R;
 import com.app.partners.activities.main.LandLord;
@@ -68,6 +69,7 @@ public class AddPartnerFragment extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 if (!dataSnapshot.exists()) {
+                    Toast.makeText(getActivity().getApplicationContext(), "User not found", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -102,13 +104,16 @@ public class AddPartnerFragment extends Fragment {
             }
         });
 
-        apartmentRef.push().setValue(UserUtils.getUser().getUid()).addOnSuccessListener(new OnSuccessListener<Void>() {
+        apartmentRef.push().setValue(targetUserId).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-
+                Toast.makeText(getActivity().getApplicationContext(), "User added successfully", Toast.LENGTH_SHORT).show();
             }
         });
 
     }
+
+
+
 
 }

@@ -84,13 +84,14 @@ public class CreateApartmentFragment extends Fragment {
         });
     }
 
-    private void createUserIdToApartment(String apartmentId, String uid) {
+    private void createUserIdToApartment(final String apartmentId, String uid) {
         // User to Apartment
         DatabaseReference userIdApartmentRef = FirebaseDatabase.getInstance().getReference().child("userId_to_apartment").child(uid);
 
         userIdApartmentRef.setValue(new UserIdApartment(apartmentId)).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
+                ((Renter)getActivity()).apartmentId = apartmentId;
                 Toast.makeText(getActivity().getApplicationContext(), "Apartment created successfully!", Toast.LENGTH_SHORT).show();
                 navigateToMyApartment();
             }

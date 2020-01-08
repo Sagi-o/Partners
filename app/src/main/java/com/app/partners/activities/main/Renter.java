@@ -1,21 +1,27 @@
 package com.app.partners.activities.main;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.viewpager.widget.ViewPager;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 import com.app.partners.R;
 import com.app.partners.RenterPageStateAdapter;
+import com.app.partners.activities.utils.CustomizedViewPager;
 import com.app.partners.activities.utils.UserUtils;
 import com.app.partners.activities.welcome.WelcomeActivity;
+import com.app.partners.fragments.renter.AddExpenseFragment;
 import com.app.partners.fragments.renter.AddPartnerFragment;
 import com.app.partners.fragments.renter.CreateApartmentFragment;
+import com.app.partners.fragments.renter.ExpensesFragment;
 import com.app.partners.fragments.renter.NoApartmentFragment;
 import com.app.partners.fragments.renter.MyApartmentFragment;
 import com.app.partners.models.Apartment;
 import com.app.partners.models.UserIdApartment;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -24,13 +30,17 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 public class Renter extends AppCompatActivity {
-    public ViewPager viewPager;
+    public CustomizedViewPager viewPager;
 
     private DatabaseReference userIdToApartmentRef;
     private DatabaseReference apartmentRef;
     private RenterPageStateAdapter renterPageStateAdapter;
+    public BottomNavigationView bottomNavigationView;
 
+    // Local User State
     public String apartmentId;
+    public String userId;
+    public String userName;
     public Apartment myApartment = new Apartment();
 
     @Override
@@ -39,6 +49,7 @@ public class Renter extends AppCompatActivity {
         setContentView(R.layout.activity_renter);
 
         setupViewPager();
+        setupNavBar();
 
         FirebaseUser firebaseUser = UserUtils.getUser();
 
@@ -48,19 +59,47 @@ public class Renter extends AppCompatActivity {
 
         String uid = firebaseUser.getUid();
 
+        userName = getIntent().getStringExtra("name");
+
+        userId = uid;
+
         userIdToApartmentRef = FirebaseDatabase.getInstance().getReference().child("userId_to_apartment").child(uid);
 
         checkIfApartmentExists();
     }
 
+    private void setupNavBar() {
+        bottomNavigationView = findViewById(R.id.bottom_navigation_view);
+
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                switch (menuItem.getItemId()) {
+                    case R.id.bottom_navigation_item_home:
+                        navigateToApartment();
+                        break;
+                    case R.id.bottom_navigation_item_pie_chart:
+                        navigateToStats();
+                        break;
+                    case R.id.bottom_navigation_item_shopping_cart:
+                        navigateToShoppingList();
+                        break;
+                }
+                return true;
+            }
+        });
+    }
+
     private void setupViewPager() {
-        viewPager = (findViewById(R.id.container));
+        viewPager = findViewById(R.id.container);
         renterPageStateAdapter = new RenterPageStateAdapter(getSupportFragmentManager(), 0);
 
-        renterPageStateAdapter.addFragment(new NoApartmentFragment());
-        renterPageStateAdapter.addFragment(new CreateApartmentFragment());
-        renterPageStateAdapter.addFragment(new MyApartmentFragment());
-        renterPageStateAdapter.addFragment(new AddPartnerFragment());
+        renterPageStateAdapter.addFragment(new NoApartmentFragment()); // 0
+        renterPageStateAdapter.addFragment(new CreateApartmentFragment()); // 1
+        renterPageStateAdapter.addFragment(new MyApartmentFragment()); // 2
+        renterPageStateAdapter.addFragment(new AddPartnerFragment()); // 3
+        renterPageStateAdapter.addFragment(new AddExpenseFragment()); // 4
+        renterPageStateAdapter.addFragment(new ExpensesFragment()); // 5
 
         viewPager.setAdapter(renterPageStateAdapter);
     }
@@ -121,6 +160,8 @@ public class Renter extends AppCompatActivity {
                     return;
                 }
 
+                Log.d("Renter", "Data for apartment has changed");
+
                 myApartment = dataSnapshot.getValue(Apartment.class);
                 navigateToApartment();
 
@@ -140,6 +181,14 @@ public class Renter extends AppCompatActivity {
         // send to apartment fragment with apId
 //        this.apartmentId = apartmentId;
         viewPager.setCurrentItem(2);
+    }
+
+    private void navigateToStats() {
+        viewPager.setCurrentItem(2);
+    }
+
+    private void navigateToShoppingList() {
+        viewPager.setCurrentItem(5);
     }
 
     public void signOut(View v) {
