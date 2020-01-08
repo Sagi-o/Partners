@@ -16,4 +16,9 @@
         android:icon="@drawable/ic_pie_chart"
         android:title="Stats"/>
 
+    <item
+        android:id="@+id/bottom_navigation_tasks"
+        android:icon="@drawable/ic_tasks"
+        android:title="Tasks" />
+
 </menu>

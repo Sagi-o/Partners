@@ -23,6 +23,7 @@ public class MyApartmentFragment extends Fragment {
     TextView name_text, address_text;
     FloatingActionButton plusButton;
     Button addPartner;
+    Button addTask;
 
     public MyApartmentFragment() {
         // Required empty public constructor
@@ -38,6 +39,7 @@ public class MyApartmentFragment extends Fragment {
         address_text = v.findViewById(R.id.address);
         plusButton = v.findViewById(R.id.plusButton);
         addPartner = v.findViewById(R.id.addPartner);
+        addTask = v.findViewById(R.id.addTask);
 
         String name = ((Renter)getActivity()).myApartment.name;
         String address = ((Renter)getActivity()).myApartment.address;
@@ -58,6 +60,16 @@ public class MyApartmentFragment extends Fragment {
                 ((Renter)getActivity()).viewPager.setCurrentItem(3);
             }
         });
+
+        addTask.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((Renter)getActivity()).viewPager.setCurrentItem(6);
+            }
+        });
+
+
+
 
         return v;
     }
