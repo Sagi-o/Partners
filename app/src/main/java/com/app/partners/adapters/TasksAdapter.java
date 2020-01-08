@@ -3,10 +3,12 @@ package com.app.partners.adapters;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.app.partners.R;
-import com.app.partners.models.Expense;
+import com.app.partners.models.Task;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -15,58 +17,59 @@ import java.util.Date;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class ExpensesAdapter extends RecyclerView.Adapter<ExpensesAdapter.ViewHolder> {
+public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.ViewHolder> {
 
-    private ArrayList<Expense> expenses = new ArrayList<>();
+    private ArrayList<Task> tasks = new ArrayList<>();
 //    private Context context;
 
-    public ExpensesAdapter(ArrayList<Expense> list) {
-        expenses = list;
+    public TasksAdapter(ArrayList<Task> list) {
+        tasks = list;
 //        context = ctx;
     }
 
-    public ExpensesAdapter() { }
+    public TasksAdapter() { }
 
-    public ArrayList<Expense> getList() {
-        return this.expenses;
+    public ArrayList<Task> getList() {
+        return this.tasks;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_expense_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_task_item, parent, false);
         ViewHolder holder = new ViewHolder(view);
         return holder;
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.price.setText(String.valueOf(expenses.get(position).value));
-        holder.description.setText(expenses.get(position).description);
-        holder.payerName.setText(expenses.get(position).payerName);
-
+        holder.description.setText(tasks.get(position).description);
+        holder.publisherName.setText(tasks.get(position).partnerName);
         SimpleDateFormat sf = new SimpleDateFormat("dd-MM-yyyy");
-        Date date = new Date(expenses.get(position).timestamp);
+        Date date = new Date(tasks.get(position).timestampPublish);
 
         holder.date.setText(sf.format(date));
     }
 
     @Override
     public int getItemCount() {
-        return expenses.size();
+        return tasks.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView price, description, payerName, date;
+        TextView publisherName, description, date;
+        CheckBox isDone;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            price = itemView.findViewById(R.id.price);
+            publisherName = itemView.findViewById(R.id.publisherName);
             description = itemView.findViewById(R.id.description);
-            payerName = itemView.findViewById(R.id.publisherName);
             date = itemView.findViewById(R.id.date);
+            isDone = itemView.findViewById(R.id.commitedCheck);
         }
     }
+
+
 }

@@ -15,10 +15,12 @@ import com.app.partners.activities.utils.UserUtils;
 import com.app.partners.activities.welcome.WelcomeActivity;
 import com.app.partners.fragments.renter.AddExpenseFragment;
 import com.app.partners.fragments.renter.AddPartnerFragment;
+import com.app.partners.fragments.renter.AddTaskFragment;
 import com.app.partners.fragments.renter.CreateApartmentFragment;
 import com.app.partners.fragments.renter.ExpensesFragment;
 import com.app.partners.fragments.renter.NoApartmentFragment;
 import com.app.partners.fragments.renter.MyApartmentFragment;
+import com.app.partners.fragments.renter.TasksFragment;
 import com.app.partners.models.Apartment;
 import com.app.partners.models.UserIdApartment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -84,6 +86,9 @@ public class Renter extends AppCompatActivity {
                     case R.id.bottom_navigation_item_shopping_cart:
                         navigateToShoppingList();
                         break;
+
+                    case R.id.bottom_navigation_tasks:
+                        navigateToTasks();
                 }
                 return true;
             }
@@ -100,6 +105,8 @@ public class Renter extends AppCompatActivity {
         renterPageStateAdapter.addFragment(new AddPartnerFragment()); // 3
         renterPageStateAdapter.addFragment(new AddExpenseFragment()); // 4
         renterPageStateAdapter.addFragment(new ExpensesFragment()); // 5
+        renterPageStateAdapter.addFragment(new AddTaskFragment()); //6
+        renterPageStateAdapter.addFragment(new TasksFragment()); //7
 
         viewPager.setAdapter(renterPageStateAdapter);
     }
@@ -181,6 +188,12 @@ public class Renter extends AppCompatActivity {
         // send to apartment fragment with apId
 //        this.apartmentId = apartmentId;
         viewPager.setCurrentItem(2);
+    }
+
+    private void navigateToTasks() {
+        // send to apartment fragment with apId
+//        this.apartmentId = apartmentId;
+        viewPager.setCurrentItem(7);
     }
 
     private void navigateToStats() {
