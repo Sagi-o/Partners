@@ -4,7 +4,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.app.partners.R;
@@ -44,8 +43,8 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.description.setText(tasks.get(position).description);
-        holder.publisherName.setText(tasks.get(position).partnerName);
-        SimpleDateFormat sf = new SimpleDateFormat("dd-MM-yyyy");
+        holder.publisherName.setText(tasks.get(position).partnerName + " Added New Task");
+        SimpleDateFormat sf = new SimpleDateFormat("dd/MM/yyyy");
         Date date = new Date(tasks.get(position).timestampPublish);
 
         holder.date.setText(sf.format(date));

@@ -41,11 +41,11 @@ public class ExpensesAdapter extends RecyclerView.Adapter<ExpensesAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.price.setText(String.valueOf(expenses.get(position).value));
+        holder.price.setText(expenses.get(position).value + " ₪");
         holder.description.setText(expenses.get(position).description);
-        holder.payerName.setText(expenses.get(position).payerName);
+        holder.payerName.setText(expenses.get(position).payerName + " Bought");
 
-        SimpleDateFormat sf = new SimpleDateFormat("dd-MM-yyyy");
+        SimpleDateFormat sf = new SimpleDateFormat("dd/MM/yyyy");
         Date date = new Date(expenses.get(position).timestamp);
 
         holder.date.setText(sf.format(date));

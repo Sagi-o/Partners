@@ -84,7 +84,7 @@ public class RegisterActivity extends AppCompatActivity {
                             User user = new User(first_name_st, last_name_st, email_st, phone_number_st, is_land_lord_bool);
                             setUserOnDb(user,v);
                         }
-                        else{
+                        else {
                             Log.d(TAG,"enter didnt work succsefuly");
                         }
                     }
