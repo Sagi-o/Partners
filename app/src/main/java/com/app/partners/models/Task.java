@@ -9,7 +9,7 @@ public class Task {
     public String lastCommitId;
     public long timestampPublish;
 
-    public Task(){}
+    public Task() {}
 
     public Task(String description, String partnerId, String taskId, String lastCommitId, long timestampPublish, String partnerName) {
         this.partnerName = partnerName;
@@ -20,6 +20,4 @@ public class Task {
         this.timestampPublish = timestampPublish;
         this.isDone = false;
     }
-
-
 }

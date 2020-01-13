@@ -63,6 +63,8 @@ public class Renter extends AppCompatActivity {
 
         userName = getIntent().getStringExtra("name");
 
+        Toast.makeText(getApplicationContext(), userName, Toast.LENGTH_SHORT).show();
+
         userId = uid;
 
         userIdToApartmentRef = FirebaseDatabase.getInstance().getReference().child("userId_to_apartment").child(uid);
@@ -117,15 +119,17 @@ public class Renter extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (!dataSnapshot.exists()) {
                     // go to creating new ap
-                    Toast.makeText(getApplicationContext(), "Apartment Not Found", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getApplicationContext(), "Apartment Not Found", Toast.LENGTH_SHORT).show();
 
                     // No apartment found
                     viewPager.setCurrentItem(0);
+                    bottomNavigationView.setVisibility(View.INVISIBLE);
 
                     return;
                 }
+                bottomNavigationView.setVisibility(View.VISIBLE);
 
-                Toast.makeText(getApplicationContext(), "Apartment Found ", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(), "Apartment Found ", Toast.LENGTH_SHORT).show();
 
                 UserIdApartment userIdApartment = dataSnapshot.getValue(UserIdApartment.class);
 
@@ -148,7 +152,7 @@ public class Renter extends AppCompatActivity {
                 // ...
             }
         };
-        userIdToApartmentRef.addListenerForSingleValueEvent(apartmentListener);
+        userIdToApartmentRef.addValueEventListener(apartmentListener);
     }
 
     private void getApartment(String apartmentId) {

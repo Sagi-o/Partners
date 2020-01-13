@@ -1,9 +1,12 @@
 package com.app.partners.fragments.renter;
 
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -54,7 +57,19 @@ public class AddPartnerFragment extends Fragment {
         enter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getUserIdFromPhone(phone.getText().toString());
+
+                new AlertDialog.Builder(getContext())
+                        .setTitle("Add New Partner")
+                        .setMessage("Are you sure you want to add " + phone.getText().toString() + " ?")
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                getUserIdFromPhone(phone.getText().toString());
+                            }
+                        })
+                        .setNegativeButton(android.R.string.no, null)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show();
+
             }
         });
 
@@ -90,19 +105,40 @@ public class AddPartnerFragment extends Fragment {
         phoneUserIdRef.addListenerForSingleValueEvent(phoneListener);
     }
 
-    private void addPartner(String targetUserId) {
-        String apId = (((Renter)getActivity()).apartmentId);
-
-        apartmentRef = FirebaseDatabase.getInstance().getReference().child("apartments").child(apId).child("partners");
+    private void addPartner(final String targetUserId) {
         userIdToApartment = FirebaseDatabase.getInstance().getReference().child("userId_to_apartment").child(targetUserId);
+
+        // Check if already have an apartment
+        ValueEventListener listener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (!dataSnapshot.exists()) {
+                    addPartnerToApartment(targetUserId);
+                } else {
+                    Toast.makeText(getActivity().getApplicationContext(), "Not added. User already has an apartment", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+        userIdToApartment.addListenerForSingleValueEvent(listener);
+    }
+
+
+    public void addPartnerToApartment(String targetUserId) {
+        String apId = (((Renter)getActivity()).apartmentId);
+        apartmentRef = FirebaseDatabase.getInstance().getReference().child("apartments").child(apId).child("partners");
 
         userIdToApartment.setValue(new UserIdApartment(apId))
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
+                    @Override
+                    public void onSuccess(Void aVoid) {
 
-            }
-        });
+                    }
+                });
 
         apartmentRef.push().setValue(targetUserId).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
@@ -110,10 +146,6 @@ public class AddPartnerFragment extends Fragment {
                 Toast.makeText(getActivity().getApplicationContext(), "User added successfully", Toast.LENGTH_SHORT).show();
             }
         });
-
     }
-
-
-
 
 }

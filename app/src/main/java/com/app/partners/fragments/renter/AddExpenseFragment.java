@@ -41,12 +41,11 @@ public class AddExpenseFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v =  inflater.inflate(R.layout.fragment_add_expense, container, false);
+        View v = inflater.inflate(R.layout.fragment_add_expense, container, false);
 
         description = v.findViewById(R.id.description);
         price = v.findViewById(R.id.price);
         add = v.findViewById(R.id.add);
-
 
         add.setOnClickListener(new View.OnClickListener() {
             @Override

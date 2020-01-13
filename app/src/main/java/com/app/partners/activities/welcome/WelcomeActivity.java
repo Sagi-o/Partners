@@ -1,5 +1,6 @@
 package com.app.partners.activities.welcome;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 
 import androidx.annotation.NonNull;
@@ -31,6 +32,7 @@ public class WelcomeActivity extends AppCompatActivity {
     private EditText password;
     private FirebaseAuth mAuth;
     private FirebaseDatabase mDatabase;
+    private ProgressDialog progressDialog;
 
     private String email_st, password_st;
 
@@ -42,6 +44,7 @@ public class WelcomeActivity extends AppCompatActivity {
         email = findViewById(R.id.email);
         password = findViewById(R.id.password);
         mDatabase = FirebaseDatabase.getInstance();
+        progressDialog = new ProgressDialog(this);
     }
 
     public void navigateToRegister(View v) {
@@ -59,13 +62,17 @@ public class WelcomeActivity extends AppCompatActivity {
             return;
         }
 
+        progressDialog.show();
+        progressDialog.setMessage("Signing In...");
+
         mAuth.signInWithEmailAndPassword(email_st, password_st)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         FirebaseUser firebaseUser = mAuth.getCurrentUser();
 
-                        Log.d("WelcomeActivity", "User is: " + firebaseUser);
+                        progressDialog.setMessage("Getting User...");
+
                         String uid = firebaseUser.getUid();
                         getUserFromDb(uid);
 
@@ -87,15 +94,18 @@ public class WelcomeActivity extends AppCompatActivity {
             ValueEventListener userListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
+                    progressDialog.dismiss();
 
                     if (dataSnapshot.exists()) {
                         User user = dataSnapshot.getValue(User.class);
                         if (user.isLandLord){
                             // navigate to landlord Activity
                             Intent i = new Intent(getBaseContext(), LandLord.class);
+                            i.putExtra("name", user.firstName + " " + user.lastName);
                             startActivity(i);
                         } else {
                             Intent i = new Intent(getBaseContext(), Renter.class);
+                            i.putExtra("name", user.firstName + " " + user.lastName);
                             startActivity(i);
                         }
                     }
