@@ -41,6 +41,8 @@ public class LandLord extends AppCompatActivity {
     public ArrayList<Apartment> apartmentIds;
     public String userId;
     public String userName;
+    public String phone;
+
     public Apartment myApartment = new Apartment();
 
     @Override
@@ -59,9 +61,11 @@ public class LandLord extends AppCompatActivity {
         String uid = firebaseUser.getUid();
 
         userName = getIntent().getStringExtra("name");
+        phone = getIntent().getStringExtra("phone");
+
         Toast.makeText(getApplicationContext(), userName, Toast.LENGTH_SHORT).show();
         userId = uid;
-        userIdToApartmentRef = FirebaseDatabase.getInstance().getReference().child("userId_to_apartment").child(uid);
+        userIdToApartmentRef = FirebaseDatabase.getInstance().getReference().child("land_lord_to_apartments").child(uid);
 
         checkIfApartmentsExists();
 
@@ -102,8 +106,6 @@ public class LandLord extends AppCompatActivity {
                         apartmentIds.add(apartment.id);
                     }
                 }*/
-
-                System.out.println("here");
 
                 navigateToHome();
             }

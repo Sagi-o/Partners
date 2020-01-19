@@ -42,6 +42,8 @@ public class AddLandLordFragment extends Fragment {
     DatabaseReference phoneUserIdRef;
     DatabaseReference apartmentRef;
     DatabaseReference userIdToApartment;
+    String apId;
+
     public AddLandLordFragment() {
         // Required empty public constructor
     }
@@ -51,6 +53,8 @@ public class AddLandLordFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_add_land_lord, container, false);
+
+        apId = ((Renter)getActivity()).apartmentId;
 
         phone = v.findViewById(R.id.phone);
         enter = v.findViewById(R.id.enter);
@@ -109,6 +113,33 @@ public class AddLandLordFragment extends Fragment {
     private void addLandLord(final String targetUserId) {
 
 
+        DatabaseReference landLordRef = FirebaseDatabase.getInstance().getReference().child("apartments").
+                child(apId).child("landlord");
+
+        ValueEventListener listener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (!dataSnapshot.exists()){
+                    //Add LandLord to apartment
+                    addLandLordToApartment(targetUserId);
+
+                    DatabaseReference landlordToApartmentsRef = FirebaseDatabase.getInstance().getReference("land_lord_to_apartments").child(targetUserId);
+                    UserIdApartment userIdApartment = new UserIdApartment(apId);
+                    landlordToApartmentsRef.push().setValue(userIdApartment);
+
+
+                }
+                else {
+                    Toast.makeText(getActivity().getApplicationContext(), "The apartment already has a landlord", Toast.LENGTH_SHORT).show();
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        }; landLordRef.addListenerForSingleValueEvent(listener);
 
         // 1.
         // Add to "landloard_to_apartments/targetUserId/push()/{ apartmentId: apartmentId }"
@@ -140,24 +171,10 @@ public class AddLandLordFragment extends Fragment {
     }
 
 
-    public void addPartnerToApartment(String targetUserId) {
+    public void addLandLordToApartment(String targetUserId) {
         String apId = (((Renter)getActivity()).apartmentId);
         apartmentRef = FirebaseDatabase.getInstance().getReference().child("apartments").child(apId).child("landlord");
-
-        userIdToApartment.setValue(new UserIdApartment(apId))
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-
-                    }
-                });
-
-        apartmentRef.push().setValue(targetUserId).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Toast.makeText(getActivity().getApplicationContext(), "LandLord added successfully", Toast.LENGTH_SHORT).show();
-            }
-        });
+        apartmentRef.setValue(targetUserId);
     }
 
 }

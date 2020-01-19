@@ -72,7 +72,10 @@ public class CreateApartmentFragment extends Fragment {
 
         final String apartmentId = apartmentsRef.getKey();
 
-        Apartment newApartment = new Apartment(name_st, address_st);
+        String phone = ((Renter)getActivity()).phone;
+        String userName = ((Renter)getActivity()).userName;
+
+        Apartment newApartment = new Apartment(name_st, address_st, phone, userName);
 
         apartmentsRef.setValue(newApartment).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override

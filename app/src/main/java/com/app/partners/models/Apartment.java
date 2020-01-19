@@ -6,16 +6,17 @@ public class Apartment {
     public String name;
     public String address;
     public String id;
-    public String landlordId;
-//    public HashMap<String, Integer> list = new HashMap<>();
-    public int sumOfShopping;
+    public String landlord;
+    public String creatorPhoneNumber;
+    public String contactName;
 
     public Apartment() {}
 
-    public Apartment(String name, String address) {
+    public Apartment(String name, String address, String creatorPhoneNumber, String contactName) {
         this.name = name;
         this.address = address;
-        sumOfShopping = 0;
+        this.creatorPhoneNumber = creatorPhoneNumber;
+        this.contactName = contactName;
     }
 
 }

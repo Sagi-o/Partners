@@ -1,8 +1,11 @@
 package com.app.partners.adapters;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.app.partners.R;
@@ -41,9 +44,19 @@ public class ApartmentsAdapter extends RecyclerView.Adapter<ApartmentsAdapter.Vi
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.addres.setText(apartments.get(position).address);
+    public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
+        holder.addres.setText(apartments.get(position).address + ", " + apartments.get(position).contactName);
+//        holder.contactName.setText(apartments.get(position).contactName);
 
+        holder.call.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Call ->
+                String phone = apartments.get(position).creatorPhoneNumber;
+//                Intent callIntent = new Intent(Intent.ACTION_CALL);
+                view.getContext().startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + phone)));
+            }
+        });
     }
 
     @Override
@@ -54,10 +67,12 @@ public class ApartmentsAdapter extends RecyclerView.Adapter<ApartmentsAdapter.Vi
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView addres;
+        ImageButton call;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            addres = itemView.findViewById(R.id.address);
+            addres = itemView.findViewById(R.id.adress);
+            call = itemView.findViewById(R.id.call);
         }
     }
 }
