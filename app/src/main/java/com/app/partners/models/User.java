@@ -7,6 +7,8 @@ public class User {
     public String email;
     public String phone;
     public boolean isLandLord;
+    public int sumOfShopping = 0;
+    public int debtToApartment = 0;
 
     public User() { }
 

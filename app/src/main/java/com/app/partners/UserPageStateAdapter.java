@@ -8,11 +8,11 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
-public class RenterPageStateAdapter extends FragmentStatePagerAdapter {
+public class UserPageStateAdapter extends FragmentStatePagerAdapter {
 
     private final List<Fragment> fragments = new ArrayList<>();
 
-    public RenterPageStateAdapter(@NonNull FragmentManager fm, int behavior) {
+    public UserPageStateAdapter(@NonNull FragmentManager fm, int behavior) {
         super(fm, behavior);
     }
 
