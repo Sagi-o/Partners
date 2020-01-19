@@ -9,17 +9,19 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 import com.app.partners.R;
-import com.app.partners.RenterPageStateAdapter;
+import com.app.partners.UserPageStateAdapter;
 import com.app.partners.activities.utils.CustomizedViewPager;
 import com.app.partners.activities.utils.UserUtils;
 import com.app.partners.activities.welcome.WelcomeActivity;
 import com.app.partners.fragments.renter.AddExpenseFragment;
+import com.app.partners.fragments.renter.AddLandLordFragment;
 import com.app.partners.fragments.renter.AddPartnerFragment;
 import com.app.partners.fragments.renter.AddTaskFragment;
 import com.app.partners.fragments.renter.CreateApartmentFragment;
 import com.app.partners.fragments.renter.ExpensesFragment;
 import com.app.partners.fragments.renter.NoApartmentFragment;
 import com.app.partners.fragments.renter.MyApartmentFragment;
+import com.app.partners.fragments.renter.StatsFragment;
 import com.app.partners.fragments.renter.TasksFragment;
 import com.app.partners.models.Apartment;
 import com.app.partners.models.UserIdApartment;
@@ -36,7 +38,7 @@ public class Renter extends AppCompatActivity {
 
     private DatabaseReference userIdToApartmentRef;
     private DatabaseReference apartmentRef;
-    private RenterPageStateAdapter renterPageStateAdapter;
+    private UserPageStateAdapter partnersPageStateAdapter;
     public BottomNavigationView bottomNavigationView;
 
     // Local User State
@@ -99,18 +101,20 @@ public class Renter extends AppCompatActivity {
 
     private void setupViewPager() {
         viewPager = findViewById(R.id.container);
-        renterPageStateAdapter = new RenterPageStateAdapter(getSupportFragmentManager(), 0);
+        partnersPageStateAdapter = new UserPageStateAdapter(getSupportFragmentManager(), 0);
 
-        renterPageStateAdapter.addFragment(new NoApartmentFragment()); // 0
-        renterPageStateAdapter.addFragment(new CreateApartmentFragment()); // 1
-        renterPageStateAdapter.addFragment(new MyApartmentFragment()); // 2
-        renterPageStateAdapter.addFragment(new AddPartnerFragment()); // 3
-        renterPageStateAdapter.addFragment(new AddExpenseFragment()); // 4
-        renterPageStateAdapter.addFragment(new ExpensesFragment()); // 5
-        renterPageStateAdapter.addFragment(new AddTaskFragment()); //6
-        renterPageStateAdapter.addFragment(new TasksFragment()); //7
+        partnersPageStateAdapter.addFragment(new NoApartmentFragment()); // 0
+        partnersPageStateAdapter.addFragment(new CreateApartmentFragment()); // 1
+        partnersPageStateAdapter.addFragment(new MyApartmentFragment()); // 2
+        partnersPageStateAdapter.addFragment(new AddPartnerFragment()); // 3
+        partnersPageStateAdapter.addFragment(new AddExpenseFragment()); // 4
+        partnersPageStateAdapter.addFragment(new ExpensesFragment()); // 5
+        partnersPageStateAdapter.addFragment(new AddTaskFragment()); //6
+        partnersPageStateAdapter.addFragment(new TasksFragment()); //7
+        partnersPageStateAdapter.addFragment(new AddLandLordFragment()); //8
+        partnersPageStateAdapter.addFragment(new StatsFragment()); //9
 
-        viewPager.setAdapter(renterPageStateAdapter);
+        viewPager.setAdapter(partnersPageStateAdapter);
     }
 
     private void checkIfApartmentExists() {
@@ -201,7 +205,7 @@ public class Renter extends AppCompatActivity {
     }
 
     private void navigateToStats() {
-        viewPager.setCurrentItem(2);
+        viewPager.setCurrentItem(9);
     }
 
     private void navigateToShoppingList() {
