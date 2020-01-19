@@ -121,7 +121,8 @@ public class RegisterActivity extends AppCompatActivity {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        navigateToWelcome(v);
+                        navigateToSplash(v);
+
                     }
                 }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -156,6 +157,11 @@ public class RegisterActivity extends AppCompatActivity {
 
     public void navigateToWelcome(View v) {
         Intent i = new Intent(getBaseContext(), WelcomeActivity.class);
+        startActivity(i);
+    }
+
+    public void navigateToSplash(View v) {
+        Intent i = new Intent(getBaseContext(), Splash.class);
         startActivity(i);
     }
 

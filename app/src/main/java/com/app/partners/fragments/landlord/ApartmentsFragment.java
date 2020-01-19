@@ -63,7 +63,7 @@ public class ApartmentsFragment extends Fragment {
                         for (DataSnapshot ds : dataSnapshot.getChildren()) {
 
                             UserIdApartment apId = ds.getValue(UserIdApartment.class);
-                            getApartment(apId,apartments);
+                            getApartment(apId, apartments);
                         }
 
                         recyclerView.setAdapter(new ApartmentsAdapter(apartments));

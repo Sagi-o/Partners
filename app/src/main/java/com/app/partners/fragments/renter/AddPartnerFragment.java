@@ -19,7 +19,9 @@ import android.widget.Toast;
 import com.app.partners.R;
 import com.app.partners.activities.main.LandLord;
 import com.app.partners.activities.main.Renter;
+import com.app.partners.activities.utils.NameValue;
 import com.app.partners.activities.utils.UserUtils;
+import com.app.partners.models.ApartmentExpenses;
 import com.app.partners.models.PhoneUserId;
 import com.app.partners.models.User;
 import com.app.partners.models.UserIdApartment;
@@ -40,6 +42,8 @@ public class AddPartnerFragment extends Fragment {
     DatabaseReference phoneUserIdRef;
     DatabaseReference apartmentRef;
     DatabaseReference userIdToApartment;
+    DatabaseReference apartmentExpensesRef;
+    String uid, name;
 
     public AddPartnerFragment() {
         // Required empty public constructor
@@ -53,6 +57,8 @@ public class AddPartnerFragment extends Fragment {
 
         phone = v.findViewById(R.id.phone);
         enter = v.findViewById(R.id.enter);
+        uid = ((Renter)getActivity()).userId;
+        name = ((Renter)getActivity()).userName;
 
         enter.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,9 +134,12 @@ public class AddPartnerFragment extends Fragment {
     }
 
 
-    public void addPartnerToApartment(String targetUserId) {
-        String apId = (((Renter)getActivity()).apartmentId);
+    public void addPartnerToApartment(final String targetUserId) {
+        final String apId = (((Renter)getActivity()).apartmentId);
         apartmentRef = FirebaseDatabase.getInstance().getReference().child("apartments").child(apId).child("partners");
+//        apartmentExpensesRef = FirebaseDatabase.getInstance().getReference().child("apartmentExpenses").child(apId).child("expenses").child(uid);
+
+//        final DatabaseReference apartmentExpensesRef = FirebaseDatabase.getInstance().getReference().child("apartmentExpenses").child(apId).child(uid);
 
         userIdToApartment.setValue(new UserIdApartment(apId))
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -146,6 +155,86 @@ public class AddPartnerFragment extends Fragment {
                 Toast.makeText(getActivity().getApplicationContext(), "User added successfully", Toast.LENGTH_SHORT).show();
             }
         });
+
+//        apartmentExpensesRef.setValue(new NameValue(((Renter)getActivity()).userName, 0)).addOnSuccessListener(new OnSuccessListener<Void>() {
+//            @Override
+//            public void onSuccess(Void aVoid) {
+//                userIdToApartment.setValue(new UserIdApartment(apId))
+//                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                            @Override
+//                            public void onSuccess(Void aVoid) {
+//
+//                            }
+//                        });
+//
+//                apartmentRef.push().setValue(targetUserId).addOnSuccessListener(new OnSuccessListener<Void>() {
+//                    @Override
+//                    public void onSuccess(Void aVoid) {
+//                        Toast.makeText(getActivity().getApplicationContext(), "User added successfully", Toast.LENGTH_SHORT).show();
+//                    }
+//                });
+//            }
+//        });
+
+//        apartmentExpensesRef.setValue(new NameValue(name, 0)).addOnSuccessListener(new OnSuccessListener<Void>() {
+//            @Override
+//            public void onSuccess(Void aVoid) {
+//                userIdToApartment.setValue(new UserIdApartment(apId))
+//                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                            @Override
+//                            public void onSuccess(Void aVoid) {
+//
+//                            }
+//                        });
+//
+//                apartmentRef.push().setValue(targetUserId).addOnSuccessListener(new OnSuccessListener<Void>() {
+//                    @Override
+//                    public void onSuccess(Void aVoid) {
+//                        Toast.makeText(getActivity().getApplicationContext(), "User added successfully", Toast.LENGTH_SHORT).show();
+//                    }
+//                });
+//            }
+//        });
+//        ValueEventListener listener = new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                if (!dataSnapshot.exists()) {
+////                    addPartnerToApartment(targetUserId);
+//                } else {
+////                    Toast.makeText(getActivity().getApplicationContext(), "Not added. User already has an apartment", Toast.LENGTH_SHORT).show();
+//
+//                    ApartmentExpenses apartmentExpenses = dataSnapshot.getValue(ApartmentExpenses.class);
+//
+////                    apartmentExpenses.expenses.put(targetUserId, 0);
+//
+//                    apartmentExpensesRef.setValue(new NameValue(name, 0)).addOnSuccessListener(new OnSuccessListener<Void>() {
+//                        @Override
+//                        public void onSuccess(Void aVoid) {
+//                            userIdToApartment.setValue(new UserIdApartment(apId))
+//                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                                        @Override
+//                                        public void onSuccess(Void aVoid) {
+//
+//                                        }
+//                                    });
+//
+//                            apartmentRef.push().setValue(targetUserId).addOnSuccessListener(new OnSuccessListener<Void>() {
+//                                @Override
+//                                public void onSuccess(Void aVoid) {
+//                                    Toast.makeText(getActivity().getApplicationContext(), "User added successfully", Toast.LENGTH_SHORT).show();
+//                                }
+//                            });
+//                        }
+//                    });
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        };
+//        apartmentRef.addListenerForSingleValueEvent(listener);
     }
 
 }

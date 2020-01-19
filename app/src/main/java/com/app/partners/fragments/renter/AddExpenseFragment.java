@@ -6,7 +6,6 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,8 +15,9 @@ import android.widget.Toast;
 
 import com.app.partners.R;
 import com.app.partners.activities.main.Renter;
-import com.app.partners.activities.utils.IdValue;
+import com.app.partners.activities.utils.NameValue;
 import com.app.partners.models.Apartment;
+import com.app.partners.models.ApartmentExpenses;
 import com.app.partners.models.Expense;
 import com.app.partners.models.User;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -27,13 +27,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.EventListener;
 import java.util.HashMap;
-import java.util.Map;
-
-import static com.app.partners.activities.utils.UserUtils.getUser;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -42,9 +37,11 @@ public class AddExpenseFragment extends Fragment {
 
     EditText description, price;
     Button add;
-    Apartment myApartment = new Apartment();
+//    Apartment myApartment = new Apartment();
     String description_st;
     int price_int;
+
+    String uid, apId;
 
     public AddExpenseFragment() {
         // Required empty public constructor
@@ -60,6 +57,9 @@ public class AddExpenseFragment extends Fragment {
         description = v.findViewById(R.id.description);
         price = v.findViewById(R.id.price);
         add = v.findViewById(R.id.add);
+
+        uid = ((Renter)getActivity()).userId;
+        apId = (((Renter)getActivity()).apartmentId);
 
         add.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,10 +81,11 @@ public class AddExpenseFragment extends Fragment {
         description_st = description.getText().toString();
 
         long timestamp = new Date().getTime();
-        String uid = ((Renter)getActivity()).userId;
-        final String apId = (((Renter)getActivity()).apartmentId);
-        getUser(price_int,uid);
-        getApartment(apId,uid);
+
+        //
+        updateUserSumOfShopping(price_int);
+        //
+
         String userName = (((Renter)getActivity()).userName);
 
         final Expense newExpense = new Expense(description_st, price_int, uid, "", timestamp, userName);
@@ -101,101 +102,27 @@ public class AddExpenseFragment extends Fragment {
             }
         });
 
-        myApartment.sumOfShopping+=price_int;
-        myApartment.list.put(uid,price_int);
-        calculateStats();
-
-
-
+        //
+//        myApartment.sumOfShopping += price_int;
+//        myApartment.list.put(uid, price_int);
+//        calculateStats();
+        //
     }
 
-    private void getUser(final int price,String uid) {
-
-
+    private void updateUserSumOfShopping(final int price) {
         final DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(uid);
         ValueEventListener listener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 final User user = dataSnapshot.getValue(User.class);
-                user.sumOfShopping+=price;
-                userRef.setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        userRef.setValue(user);
-                    }
-                });
+                user.sumOfShopping += price;
 
-            }
+                HashMap<String, Object> map = new HashMap<>();
+                map.put("sumOfShopping", user.sumOfShopping);
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+                userRef.updateChildren(map);
 
-            }
-        }; userRef.addListenerForSingleValueEvent(listener);
-
-
-
-    }
-    private void calculateStats() {
-        int numOfPartners = myApartment.list.size();
-        final int average = myApartment.sumOfShopping/numOfPartners;
-        DatabaseReference partnersRef = FirebaseDatabase.getInstance().getReference("apartments").child("partners");
-        ValueEventListener listener = new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot ds: dataSnapshot.getChildren()){
-                    int debt = average  - myApartment.list.get(ds.getValue().toString());
-                    updateUSer(ds.getValue().toString(),debt);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        }; partnersRef.addListenerForSingleValueEvent(listener);
-
-
-    }
-
-    private void updateUSer(String uid, final int debt) {
-
-        final DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(uid);
-        ValueEventListener listener = new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                final User user = dataSnapshot.getValue(User.class);
-                user.debtToApartment = debt;
-                userRef.setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        userRef.setValue(user);
-                    }
-                });
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        }; userRef.addListenerForSingleValueEvent(listener);
-
-    }
-
-    private void getApartment(String apId, final String uid) {
-        final DatabaseReference apartmentRef = FirebaseDatabase.getInstance().getReference().child("apartments").child(apId);
-        ValueEventListener listener = new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                myApartment = dataSnapshot.getValue(Apartment.class);
-                myApartment.sumOfShopping+=price_int;
-                myApartment.list.put(uid, price_int);
-                apartmentRef.setValue(myApartment).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        apartmentRef.setValue(myApartment);
-                    }
-                });
+                updateApartmentExpense(uid);
             }
 
             @Override
@@ -203,7 +130,147 @@ public class AddExpenseFragment extends Fragment {
 
             }
         };
-        apartmentRef.addListenerForSingleValueEvent(listener);
+        userRef.addListenerForSingleValueEvent(listener);
+    }
+
+//    private void calculateStats() {
+//        int numOfPartners = myApartment.list.size();
+//        final int average = myApartment.sumOfShopping/numOfPartners;
+//        DatabaseReference partnersRef = FirebaseDatabase.getInstance().getReference("apartments").child("partners");
+//        ValueEventListener listener = new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                for (DataSnapshot ds: dataSnapshot.getChildren()){
+//                    int debt = average  - myApartment.list.get(ds.getValue().toString());
+//                    updateUSer(ds.getValue().toString(),debt);
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        }; partnersRef.addListenerForSingleValueEvent(listener);
+//
+//
+//    }
+
+//    private void updateUSer(String uid, final int debt) {
+//
+//        final DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(uid);
+//        ValueEventListener listener = new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                final User user = dataSnapshot.getValue(User.class);
+//                user.debtToApartment = debt;
+//                userRef.setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+//                    @Override
+//                    public void onSuccess(Void aVoid) {
+//                        userRef.setValue(user);
+//                    }
+//                });
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        }; userRef.addListenerForSingleValueEvent(listener);
+//
+//    }
+
+    private void updateApartmentExpense(final String uid) {
+        final DatabaseReference apartmentExpensesRef = FirebaseDatabase.getInstance().getReference().child("apartmentExpenses").child(apId);
+
+        final DatabaseReference userExpenseRef = apartmentExpensesRef.child(uid);
+
+        ValueEventListener listener2 = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                if (dataSnapshot.exists()) {
+                    NameValue nv = dataSnapshot.getValue(NameValue.class);
+
+                    userExpenseRef.setValue(new NameValue(((Renter)getActivity()).userName, nv.value + price_int)).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+//                      navigateToMyApartment();
+                        }
+                    });
+                } else {
+                    userExpenseRef.setValue(new NameValue(((Renter)getActivity()).userName, price_int)).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+//                      navigateToMyApartment();
+                        }
+                    });
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+
+        userExpenseRef.addListenerForSingleValueEvent(listener2);
+
+//        ValueEventListener listener = new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                final ApartmentExpenses apartmentExpenses = dataSnapshot.getValue(ApartmentExpenses.class);
+//
+////                apartmentExpenses.sum += price_int;
+//
+//                // TODO: On adding partner, update to zero
+////                apartmentExpenses.expenses.put(uid, apartmentExpenses.expenses.get(uid) + price_int);
+//
+//                apartmentExpensesRef.child("sum").setValue(apartmentExpenses.sum).addOnSuccessListener(new OnSuccessListener<Void>() {
+//                    @Override
+//                    public void onSuccess(Void aVoid) {
+//
+//                        final DatabaseReference userExpenseRef = apartmentExpensesRef.child("expenses").child(uid);
+//
+//                        ValueEventListener listener2 = new ValueEventListener() {
+//                            @Override
+//                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//
+//                                if (dataSnapshot.exists()) {
+//                                    NameValue nv = dataSnapshot.getValue(NameValue.class);
+//
+//                                    userExpenseRef.setValue(new NameValue(((Renter)getActivity()).userName, nv.value + price_int)).addOnSuccessListener(new OnSuccessListener<Void>() {
+//                                        @Override
+//                                        public void onSuccess(Void aVoid) {
+////                                            navigateToMyApartment();
+//                                        }
+//                                    });
+//                                }
+//
+//                            }
+//
+//                            @Override
+//                            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                            }
+//                        };
+//
+//                        userExpenseRef.addListenerForSingleValueEvent(listener2);
+//
+//
+//                    }
+//                });
+//
+//
+////                apartmentExpensesRef.setValue(apartmentExpenses).addOnSuccessListener();
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        };
+//        apartmentExpensesRef.addListenerForSingleValueEvent(listener);
     }
 
 }
