@@ -109,21 +109,35 @@ public class AddLandLordFragment extends Fragment {
 
     private void addLandLord(final String targetUserId) {
 
-        userIdToApartment = FirebaseDatabase.getInstance().getReference().child("userId_to_apartment").child(targetUserId);
 
-        // Check if already have an apartment
-        ValueEventListener listener = new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    addPartnerToApartment(targetUserId);
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+        // 1.
+        // Add to "landloard_to_apartments/targetUserId/push()/{ apartmentId: apartmentId }"
+        // New UserIdApartment
 
-            }
-        };
-        userIdToApartment.addListenerForSingleValueEvent(listener);
+        // 2.
+        // Fetch "apartments/apId/landloardId"
+        // If null: do him
+        // else stop process
+
+        // If want apas data: Fetch to this ref, and get apartments
+
+
+//        userIdToApartment = FirebaseDatabase.getInstance().getReference().child("userId_to_apartment").child(targetUserId);
+//
+//        // Check if already have an apartment
+//        ValueEventListener listener = new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                    addPartnerToApartment(targetUserId);
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        };
+//        userIdToApartment.addListenerForSingleValueEvent(listener);
     }
 
 

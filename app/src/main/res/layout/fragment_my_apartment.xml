@@ -16,39 +16,38 @@
             android:id="@+id/addLandLord"
             android:layout_width="185dp"
             android:layout_height="40dp"
-            android:layout_marginTop="150dp"
+            android:layout_marginTop="16dp"
             android:background="@color/colorPrimary"
             android:text="ADD LAND LORD"
             android:textColor="@android:color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.495"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/address" />
+            app:layout_constraintTop_toBottomOf="@+id/addTask" />
 
         <Button
             android:id="@+id/addTask"
             android:layout_width="185dp"
             android:layout_height="40dp"
-            android:layout_marginTop="88dp"
+            android:layout_marginTop="16dp"
             android:background="@color/colorPrimary"
             android:text="Add New Task"
             android:textColor="@android:color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.495"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/address" />
+            app:layout_constraintTop_toBottomOf="@+id/addPartner" />
 
         <TextView
             android:id="@+id/name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="52dp"
             android:text="TextView"
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/userName" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/plusButton"
@@ -65,7 +64,7 @@
             android:id="@+id/address"
             android:layout_width="188dp"
             android:layout_height="72dp"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="8dp"
             android:text="TextView"
             android:textAlignment="center"
             app:layout_constraintEnd_toEndOf="parent"
@@ -82,7 +81,31 @@
             android:textColor="@android:color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/title" />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="Title"
+            android:textColor="@android:color/black"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/address" />
+
+        <TextView
+            android:id="@+id/userName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="TextView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

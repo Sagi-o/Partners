@@ -7,7 +7,7 @@ public class Apartment {
     public String address;
     public String id;
     public String landlordId;
-    public HashMap<String, Integer> list = new HashMap<>();
+//    public HashMap<String, Integer> list = new HashMap<>();
     public int sumOfShopping;
 
     public Apartment() {}
