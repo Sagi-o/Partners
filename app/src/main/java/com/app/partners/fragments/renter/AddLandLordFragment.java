@@ -42,7 +42,6 @@ public class AddLandLordFragment extends Fragment {
     DatabaseReference phoneUserIdRef;
     DatabaseReference apartmentRef;
     DatabaseReference userIdToApartment;
-
     public AddLandLordFragment() {
         // Required empty public constructor
     }
