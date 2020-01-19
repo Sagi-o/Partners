@@ -33,8 +33,7 @@ import java.util.ArrayList;
 public class MyApartmentFragment extends Fragment {
 
     TextView name_text, address_text, title, userName;
-    FloatingActionButton plusButton;
-    Button addPartner, addLandLord;
+    Button addPartner, addLandLord, addExpense;
     Button addTask;
     String apId, name, uid;
     DatabaseReference statsRef;
@@ -51,13 +50,12 @@ public class MyApartmentFragment extends Fragment {
 
         name_text = v.findViewById(R.id.name);
         address_text = v.findViewById(R.id.address);
-        plusButton = v.findViewById(R.id.plusButton);
+        addExpense = v.findViewById(R.id.newExpense);
         addPartner = v.findViewById(R.id.addPartner);
         addLandLord = v.findViewById(R.id.addLandLord);
         addTask = v.findViewById(R.id.addTask);
         title = v.findViewById(R.id.title);
         userName = v.findViewById(R.id.userName);
-
 
         name = ((Renter)getActivity()).myApartment.name;
         uid = ((Renter)getActivity()).userId;
@@ -67,7 +65,7 @@ public class MyApartmentFragment extends Fragment {
         address_text.setText(address);
         userName.setText(((Renter)getActivity()).userName);
 
-        plusButton.setOnClickListener(new View.OnClickListener() {
+        addExpense.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 ((Renter)getActivity()).viewPager.setCurrentItem(4);
