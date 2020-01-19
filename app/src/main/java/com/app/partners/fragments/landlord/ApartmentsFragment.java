@@ -34,7 +34,9 @@ import java.util.ArrayList;
 public class ApartmentsFragment extends Fragment {
 
     RecyclerView recyclerView;
-    String userId;
+    String landLordId;
+    ArrayList<Apartment> apartments = new ArrayList<>();
+
     public ApartmentsFragment() {
         // Required empty public constructor
     }
@@ -45,29 +47,34 @@ public class ApartmentsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_apartments, container, false);
-        recyclerView = v.findViewById(R.id.recycleView);
-        userId = ((LandLord)getActivity()).userId;
+        recyclerView = v.findViewById(R.id.recyclerView);
+        landLordId = ((LandLord)getActivity()).userId;
         initApartmentsList();
         return v;
     }
 
     private void initApartmentsList() {
 
-        final DatabaseReference userId_to_apartmentRef = FirebaseDatabase.getInstance().getReference().child("userId_to_apartment").child(userId);
+        final DatabaseReference landLordToApartmentsRef = FirebaseDatabase.getInstance().getReference().child("land_lord_to_apartments").child(landLordId);
         ValueEventListener listener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    final ArrayList<Apartment> apartments = new ArrayList<>();
+                    apartments.clear();
+
+                    final ArrayList<String> apartmentIds = new ArrayList<>();
+
                     if (dataSnapshot.exists()) {
                         for (DataSnapshot ds : dataSnapshot.getChildren()) {
-
                             UserIdApartment apId = ds.getValue(UserIdApartment.class);
-                            getApartment(apId, apartments);
+//                            getApartment(apId, apartments);
+                            apartmentIds.add(apId.apartmentId);
                         }
 
-                        recyclerView.setAdapter(new ApartmentsAdapter(apartments));
-                        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                        getApartments(apartmentIds);
+
+//                        recyclerView.setAdapter(new ApartmentsAdapter(apartments));
+//                        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
                     }
 
@@ -80,9 +87,35 @@ public class ApartmentsFragment extends Fragment {
             }
 
         };
-        userId_to_apartmentRef.addValueEventListener(listener);
+        landLordToApartmentsRef.addValueEventListener(listener);
 
 
+    }
+
+    private void getApartments(final ArrayList<String> apIds) {
+        for (String apId : apIds) {
+            final DatabaseReference apRef = FirebaseDatabase.getInstance().getReference().child("apartments").child(apId);
+
+            ValueEventListener listener = new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    Apartment apartment = dataSnapshot.getValue(Apartment.class);
+                    apartments.add(apartment);
+
+                    if (apartments.size() == apIds.size()) {
+                        recyclerView.setAdapter(new ApartmentsAdapter(apartments));
+                        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            };
+
+            apRef.addListenerForSingleValueEvent(listener);
+        }
     }
 
     private void getApartment(final UserIdApartment apId, final ArrayList<Apartment> apartments) {

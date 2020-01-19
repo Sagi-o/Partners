@@ -45,6 +45,7 @@ public class Renter extends AppCompatActivity {
     public String apartmentId;
     public String userId;
     public String userName;
+    public String phone;
     public Apartment myApartment = new Apartment();
 
     @Override
@@ -64,6 +65,7 @@ public class Renter extends AppCompatActivity {
         String uid = firebaseUser.getUid();
 
         userName = getIntent().getStringExtra("name");
+        phone = getIntent().getStringExtra("phone");
 
         Toast.makeText(getApplicationContext(), userName, Toast.LENGTH_SHORT).show();
 

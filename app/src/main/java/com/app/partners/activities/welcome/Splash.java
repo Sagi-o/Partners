@@ -72,11 +72,15 @@ public class Splash extends AppCompatActivity implements Serializable {
                             // Extras: User
                             Intent i = new Intent(getBaseContext(), LandLord.class);
                             i.putExtra("name", user.firstName + " " + user.lastName);
+                            i.putExtra("phone", user.phone);
+
                             startActivity(i);
                             finish();
                         } else {
                             Intent i = new Intent(getBaseContext(), Renter.class);
                             i.putExtra("name", user.firstName + " " + user.lastName);
+                            i.putExtra("phone", user.phone);
+
                             startActivity(i);
                             finish();
                         }

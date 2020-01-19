@@ -97,9 +97,11 @@ public class MyApartmentFragment extends Fragment {
 
 
         apId = ((Renter)getActivity()).apartmentId;
-        statsRef = FirebaseDatabase.getInstance().getReference().child("apartmentExpenses").child(apId);
 
-        getStats();
+        if (apId != null) {
+            statsRef = FirebaseDatabase.getInstance().getReference().child("apartmentExpenses").child(apId);
+            getStats();
+        }
 
         return v;
     }
